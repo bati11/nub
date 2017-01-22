@@ -18,6 +18,7 @@ public class AstNode {
         E visitDefFunction(DefFunction node);
         E visitFunctionCall(FunctionCall node);
         E visitReturn(Return node);
+        E visitPairExpression(PairExpression node);
     }
 
     public static abstract class Expression extends AstNode {
@@ -261,4 +262,19 @@ public class AstNode {
             return visitor.visitIdentifier(this);
         }
     }
+
+    public static class PairExpression extends Expression {
+        private final Expression l, r;
+        public PairExpression(Expression l, Expression r) {
+            this.l = l;
+            this.r = r;
+        }
+        public Expression l() { return l; }
+        public Expression r() { return r; }
+
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitPairExpression(this);
+        }
+    }
+
 }

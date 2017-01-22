@@ -69,9 +69,14 @@ expression returns [AstNode.Expression e]
 
 assignment returns [AstNode.Expression e]
     : name=IDENTIFIER EQ x=expression {$e = new AstNode.AssignmentOperation($name.getText(), $x.e);}
+    | v=pair {$e = $v.e;}
+    ;
+
+pair returns [AstNode.Expression e]
+    : CONS LP l=pair ',' r=pair RP {$e = new AstNode.PairExpression($l.e, $r.e);}
     | v=logical {$e = $v.e;}
     ;
-    
+
 logical returns [AstNode.Expression e]
     : l=logical op='&&' r=conditional {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=logical op='||' r=conditional {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
@@ -147,6 +152,9 @@ WHILE : 'while'
    ;
 
 RETURN : 'return'
+   ;
+
+CONS : 'cons'
    ;
 
 IDENTIFIER

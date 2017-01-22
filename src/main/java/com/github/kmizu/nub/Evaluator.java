@@ -126,14 +126,14 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     @Override
     public Object visitPrintExpression(AstNode.PrintExpression node) {
         Object value = node.target().accept(this);
-        System.out.print(value);
+        System.out.print(makeString(node.target()));
         return value;
     }
 
     @Override
     public Object visitPrintlnExpression(AstNode.PrintlnExpression node) {
         Object value = node.target().accept(this);
-        System.out.println(value);
+        System.out.println(makeString(node.target()));
         return value;
     }
 
@@ -236,4 +236,31 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
         Object value = node.expression().accept(this);
         throw new ReturnException(value);
     }
+
+    @Override
+    public Object visitPairExpression(AstNode.PairExpression node) {
+        return Arrays.asList(node.l(), node.r());
+    }
+
+    private String makeString(AstNode.Expression expression) {
+        Object value = expression.accept(this);
+        if (value instanceof List) {
+            if (((List) value).size() == 0) {
+                return "()";
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append("(");
+                AstNode.Expression e1 = (AstNode.Expression) ((List) value).get(0);
+                sb.append(makeString(e1));
+                sb.append(",");
+                AstNode.Expression e2 = (AstNode.Expression) ((List) value).get(1);
+                sb.append(makeString(e2));
+                sb.append(")");
+                return sb.toString();
+            }
+        } else {
+            return value.toString();
+        }
+    }
+
 }
