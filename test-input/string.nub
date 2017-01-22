@@ -1,2 +1,10 @@
-let s = "Hello" + "World";
-println(s);
+def indexOf(s, i) {
+  if (i == 0) {
+    return car(s);
+  } else {
+    indexOf(cdr(s), i - 1);
+  }
+}
+
+let s = "Hello" + "World!";
+println(indexOf(s, 5));

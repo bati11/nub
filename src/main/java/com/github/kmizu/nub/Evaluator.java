@@ -57,6 +57,8 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
                 Object rhs = node.rhs().accept(this);
                 if(lhs instanceof String || rhs instanceof String) {
                     return lhs.toString() + rhs.toString();
+                } else if (lhs instanceof List && rhs instanceof List) {
+                    return append((List)lhs, (List)rhs);
                 } else {
                     return asInt(lhs) + asInt(rhs);
                 }
@@ -110,7 +112,24 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
 
     @Override
     public Object visitStringLiteral(AstNode.StringLiteral node) {
-        return node.value();
+        String s = node.value();
+        ArrayList resultPair = null;
+        List lastPair = null;
+        for (char c : s.toCharArray()) {
+            if (resultPair == null) {
+                resultPair = new ArrayList();
+                resultPair.add(String.valueOf(c));
+                resultPair.add(new ArrayList());
+                lastPair = resultPair;
+            } else {
+                List newPair = new ArrayList();
+                newPair.add(String.valueOf(c));
+                newPair.add(new ArrayList());
+                lastPair.set(1, newPair);
+                lastPair = newPair;
+            }
+        }
+        return resultPair;
     }
 
     @Override
@@ -271,6 +290,16 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
         } else {
             return value.toString();
         }
+    }
+
+    private List append(List lhs, List rhs) {
+        List resultPair = new ArrayList(lhs);
+        List lastPair = resultPair;
+        while (((List)lastPair.get(1)).size() != 0) {
+            lastPair = (List)lastPair.get(1);
+        }
+        lastPair.set(1, rhs);
+        return resultPair;
     }
 
 }
