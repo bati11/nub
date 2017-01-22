@@ -100,6 +100,13 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
                 return ((List) node.v().accept(this)).get(0);
             case "cdr":
                 return ((List) node.v().accept(this)).get(1);
+            case "isNil":
+                Object x = node.v().accept(this);
+                if (x instanceof List && ((List)x).size() == 0) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             default:
                 throw new RuntimeException("cannot reach here");
         }

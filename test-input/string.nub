@@ -1,3 +1,15 @@
+def inLength(s, acc) {
+  if (isNil(s)) {
+    return acc;
+  } else {
+    return inLength(cdr(s), acc + 1);
+  }
+}
+
+def length(s) {
+  return inLength(s, 0);
+}
+
 def indexOf(s, i) {
   if (i == 0) {
     return car(s);
@@ -8,3 +20,4 @@ def indexOf(s, i) {
 
 let s = "Hello" + "World!";
 println(indexOf(s, 5));
+println(length(s));

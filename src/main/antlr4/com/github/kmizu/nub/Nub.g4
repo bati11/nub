@@ -90,6 +90,7 @@ conditional returns [AstNode.Expression e]
     | l=conditional op='>' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=conditional op='==' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | l=conditional op='!=' r=additive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | op=ISNIL LP v=additive RP {$e = new AstNode.UnaryOperation($op.getText(), $v.e);}
     | v=additive {$e = $v.e;}
     ;
 
@@ -138,6 +139,10 @@ PRINTLN
 
 PRINT
     : 'print'
+    ;
+
+ISNIL
+    : 'isNil'
     ;
 
 LET
