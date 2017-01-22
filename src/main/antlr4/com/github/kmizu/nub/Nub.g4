@@ -100,8 +100,14 @@ additive returns [AstNode.Expression e]
     ;
 
 multitive returns [AstNode.Expression e]
-    : l=multitive op='*' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
-    | l=multitive op='/' r=primary {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    : l=multitive op='*' r=selective {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=multitive op='/' r=selective {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | v=selective {$e = $v.e;}
+    ;
+
+selective returns [AstNode.Expression e]
+    : op=CAR LP p=pair RP {$e = new AstNode.UnaryOperation($op.getText(), $p.e);}
+    | op=CDR LP p=pair RP {$e = new AstNode.UnaryOperation($op.getText(), $p.e);}
     | v=primary {$e = $v.e;}
     ;
 
@@ -155,6 +161,12 @@ RETURN : 'return'
    ;
 
 CONS : 'cons'
+   ;
+
+CAR : 'car'
+   ;
+
+CDR : 'cdr'
    ;
 
 IDENTIFIER

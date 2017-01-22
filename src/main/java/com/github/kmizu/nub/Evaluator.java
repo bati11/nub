@@ -92,6 +92,18 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     }
 
     @Override
+    public Object visitUnaryOperation(AstNode.UnaryOperation node) {
+        switch (node.operator()) {
+            case "car":
+                return ((List) node.v().accept(this)).get(0);
+            case "cdr":
+                return ((List) node.v().accept(this)).get(1);
+            default:
+                throw new RuntimeException("cannot reach here");
+        }
+    }
+
+    @Override
     public Integer visitNumber(AstNode.Number node) {
         return node.value();
     }
@@ -126,14 +138,14 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
     @Override
     public Object visitPrintExpression(AstNode.PrintExpression node) {
         Object value = node.target().accept(this);
-        System.out.print(makeString(node.target()));
+        System.out.print(makeString(node.target().accept(this)));
         return value;
     }
 
     @Override
     public Object visitPrintlnExpression(AstNode.PrintlnExpression node) {
         Object value = node.target().accept(this);
-        System.out.println(makeString(node.target()));
+        System.out.println(makeString(node.target().accept(this)));
         return value;
     }
 
@@ -239,22 +251,20 @@ public class Evaluator implements AstNode.ExpressionVisitor<Object> {
 
     @Override
     public Object visitPairExpression(AstNode.PairExpression node) {
-        return Arrays.asList(node.l(), node.r());
+        return Arrays.asList(node.l().accept(this), node.r().accept(this));
     }
 
-    private String makeString(AstNode.Expression expression) {
-        Object value = expression.accept(this);
+    private String makeString(Object value) {
         if (value instanceof List) {
             if (((List) value).size() == 0) {
                 return "()";
             } else {
                 StringBuilder sb = new StringBuilder();
                 sb.append("(");
-                AstNode.Expression e1 = (AstNode.Expression) ((List) value).get(0);
-                sb.append(makeString(e1));
+                List pair = (List)value;
+                sb.append(makeString(pair.get(0)));
                 sb.append(",");
-                AstNode.Expression e2 = (AstNode.Expression) ((List) value).get(1);
-                sb.append(makeString(e2));
+                sb.append(makeString(pair.get(1)));
                 sb.append(")");
                 return sb.toString();
             }

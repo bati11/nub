@@ -5,6 +5,7 @@ import java.util.List;
 public class AstNode {
     public interface ExpressionVisitor<E> {
         E visitBinaryOperation(BinaryOperation node);
+        E visitUnaryOperation(UnaryOperation node);
         E visitNumber(Number node);
         E visitStringLiteral(StringLiteral node);
         E visitLetExpression(LetExpression node);
@@ -224,6 +225,22 @@ public class AstNode {
 
         public <E> E accept(ExpressionVisitor<E> visitor) {
             return visitor.visitBinaryOperation(this);
+        }
+    }
+
+    public static class UnaryOperation extends Expression {
+        private final String operator;
+        private final Expression v;
+        public String operator() { return operator; };
+        public Expression v() { return v; }
+
+        public UnaryOperation(String operator, Expression v) {
+            this.operator = operator;
+            this.v = v;
+        }
+
+        public <E> E accept(ExpressionVisitor<E> visitor) {
+            return visitor.visitUnaryOperation(this);
         }
     }
 
