@@ -101,8 +101,13 @@ additive returns [AstNode.Expression e]
     ;
 
 multitive returns [AstNode.Expression e]
-    : l=multitive op='*' r=selective {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
-    | l=multitive op='/' r=selective {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    : l=multitive op='*' r=expornantialtive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | l=multitive op='/' r=expornantialtive {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
+    | v=expornantialtive {$e = $v.e;}
+    ;
+
+expornantialtive returns [AstNode.Expression e]
+    : l=expornantialtive op='**' r=selective {$e = new AstNode.BinaryOperation($op.getText(), $l.e, $r.e);}
     | v=selective {$e = $v.e;}
     ;
 
